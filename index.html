@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Borrowed Books - Track Library Loans</title>
+  <meta name="description" content="A sleek, lightweight web application to track books you have borrowed from the library, complete with return countdowns and color-coded status tracking." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header>
+    <div>
+      <span class="header-eyebrow">Library</span>
+      <h1>My Borrowed Books</h1>
+    </div>
+    <span id="book-count">0 books</span>
+  </header>
+
+  <!-- ── Modal: Log a borrowed book ── -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <h2 id="modal-title">Log a borrowed book</h2>
+
+      <div class="form-group">
+        <label for="f-title">Book title</label>
+        <input id="f-title" type="text" placeholder="e.g. The Midnight Library" />
+      </div>
+
+      <div class="form-group">
+        <label for="f-author">Author</label>
+        <input id="f-author" type="text" placeholder="e.g. Matt Haig" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="f-genre">Genre</label>
+          <select id="f-genre">
+            <option value="Fiction">Fiction</option>
+            <option value="Non-Fiction">Non-Fiction</option>
+            <option value="Science">Science</option>
+            <option value="History">History</option>
+            <option value="Biography">Biography</option>
+            <option value="Mystery">Mystery</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Self-Help">Self-Help</option>
+            <option value="Technology">Technology</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="f-due">Return by</label>
+          <input id="f-due" type="date" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="cancel-btn">Cancel</button>
+        <button class="btn btn-primary" id="save-btn">Log book</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <main>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="search-input" type="search" placeholder="Search by title or author…" />
+      </div>
+      <button class="btn btn-primary" id="add-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Log a book
+      </button>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="overdue">Overdue</button>
+      <button class="filter-btn" data-filter="due-soon">Due soon</button>
+      <button class="filter-btn" data-filter="safe">Safe</button>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="grid" id="grid"></div>
+
+  </main>
+
+  <div id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
