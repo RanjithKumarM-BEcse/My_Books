@@ -383,7 +383,7 @@ setInterval(render, 60 * 1000);
 
 
 // ── SEED DATA (first visit) ──────────────────────────────────
-if (books.length === 0) {
+if (!localStorage.getItem('borrowed_books_seeded')) {
   const today  = new Date();
   const addDays = (n) => {
     const d = new Date(today);
@@ -399,6 +399,7 @@ if (books.length === 0) {
     { id: generateId(), title: 'Thinking, Fast and Slow',  author: 'Daniel Kahneman',   borrowedFrom: 'Sarah',         genre: 'Non-Fiction',due: addDays(3),  borrowed: addDays(-11) },
   ];
   saveToStorage();
+  localStorage.setItem('borrowed_books_seeded', 'true');
 }
 
 
