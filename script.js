@@ -18,6 +18,23 @@ const GENRE_COLORS = {
   'Other':       '#5a5a5a',
 };
 
+function getGenreColor(genre) {
+  const clean = (genre || '').trim();
+  if (!clean) return GENRE_COLORS['Other'];
+  
+  // Match predefined genres case-insensitively
+  const match = Object.keys(GENRE_COLORS).find(k => k.toLowerCase() === clean.toLowerCase());
+  if (match) return GENRE_COLORS[match];
+  
+  // Otherwise generate nice HSL
+  let hash = 0;
+  for (let i = 0; i < clean.length; i++) {
+    hash = clean.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue}, 55%, 35%)`;
+}
+
 
 // ── STATE ────────────────────────────────────────────────────
 let books       = loadFromStorage();
@@ -172,7 +189,7 @@ function render() {
 
   // Build cards
   grid.innerHTML = visible.map(book => {
-    const color  = GENRE_COLORS[book.genre] || GENRE_COLORS['Other'];
+    const color  = getGenreColor(book.genre);
     const cd     = countdownInfo(book.due, book.borrowed);
 
     return `
@@ -181,9 +198,17 @@ function render() {
         <div class="card-spine" style="background: ${color};"></div>
 
         <div class="card-body">
-          <div class="card-genre" style="color: ${color};">${escHtml(book.genre)}</div>
+          <div class="card-genre" style="color: ${color};">${escHtml(book.genre || 'Other')}</div>
           <div class="card-title">${escHtml(book.title)}</div>
-          <div class="card-author">by ${escHtml(book.author)}</div>
+          ${book.author ? `<div class="card-author">by ${escHtml(book.author)}</div>` : ''}
+          ${book.borrowedFrom ? `
+            <div class="card-borrowed">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="opacity: 0.7;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              Borrowed from: ${escHtml(book.borrowedFrom)}
+            </div>` : ''}
         </div>
 
         <!-- Countdown badge -->
@@ -229,13 +254,14 @@ function render() {
 
 // ── CRUD: CREATE ─────────────────────────────────────────────
 function addBook() {
-  const title  = document.getElementById('f-title').value.trim();
-  const author = document.getElementById('f-author').value.trim();
-  const genre  = document.getElementById('f-genre').value;
-  const due    = document.getElementById('f-due').value;
+  const title        = document.getElementById('f-title').value.trim();
+  const author       = document.getElementById('f-author').value.trim();
+  const borrowedFrom = document.getElementById('f-borrowed-from').value.trim();
+  const genre        = document.getElementById('f-genre').value.trim();
+  const due          = document.getElementById('f-due').value;
 
-  if (!title || !author) {
-    showToast('Please fill in title and author');
+  if (!title) {
+    showToast('Please enter a book title');
     return;
   }
   if (!due) {
@@ -250,12 +276,13 @@ function addBook() {
   const today = new Date().toISOString().split('T')[0];
 
   const newBook = {
-    id:       generateId(),
-    title:    title,
-    author:   author,
-    genre:    genre,
-    due:      due,        // "YYYY-MM-DD" string
-    borrowed: today,      // date logged
+    id:           generateId(),
+    title:        title,
+    author:       author,        // optional
+    borrowedFrom: borrowedFrom,  // new column
+    genre:        genre || 'Other',
+    due:          due,        // "YYYY-MM-DD" string
+    borrowed:     today,      // date logged
   };
 
   books.push(newBook);   // Array.push — add to end
@@ -289,7 +316,8 @@ function markReturned(id) {
 function openModal() {
   document.getElementById('f-title').value  = '';
   document.getElementById('f-author').value = '';
-  document.getElementById('f-genre').value  = 'Fiction';
+  document.getElementById('f-borrowed-from').value = '';
+  document.getElementById('f-genre').value  = '';
 
   // Default due date = today + 14 days (typical library loan)
   const def = new Date();
@@ -364,11 +392,11 @@ if (books.length === 0) {
   };
 
   books = [
-    { id: generateId(), title: 'The Name of the Wind',    author: 'Patrick Rothfuss', genre: 'Fantasy',     due: addDays(12), borrowed: addDays(-2) },
-    { id: generateId(), title: 'Sapiens',                  author: 'Yuval Noah Harari', genre: 'History',    due: addDays(2),  borrowed: addDays(-12) },
-    { id: generateId(), title: 'Project Hail Mary',        author: 'Andy Weir',         genre: 'Fiction',    due: addDays(-1), borrowed: addDays(-15) },
-    { id: generateId(), title: 'Clean Code',               author: 'Robert C. Martin',  genre: 'Technology', due: addDays(7),  borrowed: addDays(-7)  },
-    { id: generateId(), title: 'Thinking, Fast and Slow',  author: 'Daniel Kahneman',   genre: 'Non-Fiction',due: addDays(3),  borrowed: addDays(-11) },
+    { id: generateId(), title: 'The Name of the Wind',    author: 'Patrick Rothfuss',  borrowedFrom: 'Emily',         genre: 'Fantasy',     due: addDays(12), borrowed: addDays(-2) },
+    { id: generateId(), title: 'Sapiens',                  author: 'Yuval Noah Harari',  borrowedFrom: 'City Library',  genre: 'History',    due: addDays(2),  borrowed: addDays(-12) },
+    { id: generateId(), title: 'Project Hail Mary',        author: 'Andy Weir',         borrowedFrom: 'Dave',          genre: 'Fiction',    due: addDays(-1), borrowed: addDays(-15) },
+    { id: generateId(), title: 'Clean Code',               author: '',                  borrowedFrom: 'Office Library',genre: 'Technology', due: addDays(7),  borrowed: addDays(-7)  },
+    { id: generateId(), title: 'Thinking, Fast and Slow',  author: 'Daniel Kahneman',   borrowedFrom: 'Sarah',         genre: 'Non-Fiction',due: addDays(3),  borrowed: addDays(-11) },
   ];
   saveToStorage();
 }

@@ -213,6 +213,24 @@ main {
   color: var(--ink-muted);
 }
 
+.card-borrowed {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.label-optional {
+  font-weight: normal;
+  text-transform: none;
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  margin-left: 0.25rem;
+}
+
 /* ── Countdown block ─────────────────────────────────────────── */
 .countdown-block {
   margin: 1rem 1.2rem 0;
