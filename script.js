@@ -382,26 +382,5 @@ document.getElementById('grid').addEventListener('click', function(e) {
 setInterval(render, 60 * 1000);
 
 
-// ── SEED DATA (first visit) ──────────────────────────────────
-if (!localStorage.getItem('borrowed_books_seeded')) {
-  const today  = new Date();
-  const addDays = (n) => {
-    const d = new Date(today);
-    d.setDate(d.getDate() + n);
-    return d.toISOString().split('T')[0];
-  };
-
-  books = [
-    { id: generateId(), title: 'The Name of the Wind',    author: 'Patrick Rothfuss',  borrowedFrom: 'Emily',         genre: 'Fantasy',     due: addDays(12), borrowed: addDays(-2) },
-    { id: generateId(), title: 'Sapiens',                  author: 'Yuval Noah Harari',  borrowedFrom: 'City Library',  genre: 'History',    due: addDays(2),  borrowed: addDays(-12) },
-    { id: generateId(), title: 'Project Hail Mary',        author: 'Andy Weir',         borrowedFrom: 'Dave',          genre: 'Fiction',    due: addDays(-1), borrowed: addDays(-15) },
-    { id: generateId(), title: 'Clean Code',               author: '',                  borrowedFrom: 'Office Library',genre: 'Technology', due: addDays(7),  borrowed: addDays(-7)  },
-    { id: generateId(), title: 'Thinking, Fast and Slow',  author: 'Daniel Kahneman',   borrowedFrom: 'Sarah',         genre: 'Non-Fiction',due: addDays(3),  borrowed: addDays(-11) },
-  ];
-  saveToStorage();
-  localStorage.setItem('borrowed_books_seeded', 'true');
-}
-
-
 // ── INITIAL RENDER ───────────────────────────────────────────
 render();
