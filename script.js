@@ -1,10 +1,4 @@
-// ============================================================
-//  My Borrowed Books — script.js
-//  Track books borrowed from the library with a return countdown
-// ============================================================
 
-
-// ── GENRE COLOURS (spine accent) ─────────────────────────────
 const GENRE_COLORS = {
   'Fiction':     '#2d6a4f',
   'Non-Fiction': '#1a4971',
@@ -336,9 +330,6 @@ function openModal() {
 function closeModal() {
   document.getElementById('overlay').classList.remove('open');
 }
-
-
-// ── EVENT LISTENERS ──────────────────────────────────────────
 document.getElementById('add-btn').addEventListener('click', openModal);
 document.getElementById('cancel-btn').addEventListener('click', closeModal);
 document.getElementById('save-btn').addEventListener('click', addBook);
@@ -346,17 +337,13 @@ document.getElementById('save-btn').addEventListener('click', addBook);
 document.getElementById('overlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
-
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeModal();
 });
-
 document.getElementById('search-input').addEventListener('input', function(e) {
   searchQuery = e.target.value;
   render();
 });
-
-// Filter tabs
 document.getElementById('filters').addEventListener('click', function(e) {
   const btn = e.target.closest('.filter-btn');
   if (!btn) return;
@@ -365,22 +352,12 @@ document.getElementById('filters').addEventListener('click', function(e) {
   activeFilter = btn.dataset.filter;
   render();
 });
-
-// Card actions (event delegation — one listener for all cards)
 document.getElementById('grid').addEventListener('click', function(e) {
   const btn = e.target.closest('[data-action]');
   if (!btn) return;
-
   const { action, id } = btn.dataset;
   if (action === 'remove')  removeBook(id);
   if (action === 'return')  markReturned(id);
 });
-
-
-// ── LIVE COUNTDOWN — refresh every minute ────────────────────
-// So the countdown stays accurate without a page reload
 setInterval(render, 60 * 1000);
-
-
-// ── INITIAL RENDER ───────────────────────────────────────────
 render();
